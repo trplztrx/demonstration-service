@@ -1,0 +1,5 @@
+logger:
+    log-level: "info"
+    log-file: "./stream-delivery.log"
+
+postgres:
