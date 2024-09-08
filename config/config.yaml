@@ -3,3 +3,9 @@ logger:
     log-file: "./stream-delivery.log"
 
 postgres:
+    host: "postgres"
+    port: 5432
+    user: ${POSTGRES_USER}
+    password: ${USER_PASSWORD}
+    db: ${POSTGRES_DB}
+    db-timeout-sec: 5

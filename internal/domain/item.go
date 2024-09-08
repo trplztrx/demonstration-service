@@ -1,6 +1,7 @@
 package domain
 
 type Item struct {
+	OrderUID    string
 	ChrtID      string
 	TrackNumber string
 	Price       int
@@ -9,6 +10,7 @@ type Item struct {
 	Sale        int
 	Size        int
 	TotalPrice  int
+	NmID        string
 	Brand       string
 	Status      int
 }

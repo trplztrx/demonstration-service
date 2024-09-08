@@ -17,6 +17,12 @@ type Logger struct {
 }
 
 type Db struct {
+	Host         string `yaml:"host" env:"HOST" env-default:"localhost"`
+	Port         int    `yaml:"port"`
+	User         string `yaml:"user" env:"POSTGRES_USER" env-default:"postgres"`
+	Password     string `yaml:"password" env:"POSTGRES_PASSWORD" env-default:"password"`
+	Db           string `yaml:"postgres-db" env:"POSTGRES_DB" env-default:"postgres"`
+	DbTimeoutSec int    `yaml:"db-timeout-sec"`
 }
 
 func ReadConfig() (*Config, error) {
