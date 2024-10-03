@@ -1,6 +1,6 @@
 package domain
 
-type OrderCoordinator struct {
+type Coordinator struct {
 	OrderUID string
 	Order    Order
 	Delivery Delivery

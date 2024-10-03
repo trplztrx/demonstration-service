@@ -17,7 +17,8 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE deliveries (
-    order_uid VARCHAR(255) PRIMARY KEY REFERENCES orders(order_uid) ON DELETE CASCADE,
+    id primary key,
+    order_uid VARCHAR(255) KEY REFERENCES orders(order_uid) ON DELETE CASCADE,
     name VARCHAR(255),
     phone VARCHAR(20),
     zip VARCHAR(20),

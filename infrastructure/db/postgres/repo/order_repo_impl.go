@@ -4,6 +4,7 @@ import (
 	"context"
 	"delivery-stream-service/infrastructure/db/adapter"
 	"delivery-stream-service/internal/domain"
+	"delivery-stream-service/internal/transaction"
 
 	"go.uber.org/zap"
 )
@@ -18,13 +19,13 @@ import (
 // 	}
 // }
 
-func (p *PostgresOrderRepo) Create(ctx context.Context, dbAdapter transaction.SQLExecutor, order *domain.Order, lg *zap.Logger) error {
+func (p *PostgresOrderRepo) Create(ctx context.Context, executor transaction.SQLExecutor, order *domain.Order, lg *zap.Logger) error {
 	lg.Info("Create order", zap.String("order_uid", order.OrderUID))
 
 	query := `
 	INSERT INTO orders (order_uid, track_number, entry, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard)
 	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`
-	_, err := p.dbAdapter.Exec(ctx, query,
+	_, err := p.executor.Exec(ctx, query,
 		order.OrderUID, order.TrackNumber, order.Entry, order.Locale, order.InternalSignature,
 		order.CustomerID, order.DeliveryService, order.ShardKey, order.SmID, order.CreatedAt, order.OofShard)
 	if err != nil {

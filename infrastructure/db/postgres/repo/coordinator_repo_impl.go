@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type PostgresOrderCoordinatorRepo struct {
+type PostgresCoordinatorRepo struct {
 	dbPool       *pgxpool.Pool
 	deliveryRepo repo.DeliveryRepo
 	itemRepo     repo.ItemRepo
@@ -19,8 +19,8 @@ type PostgresOrderCoordinatorRepo struct {
 	orderRepo    repo.OrderRepo
 }
 
-func NewPostgresOrderCoordinatorRepo(dbPool *pgxpool.Pool, orderRepo repo.OrderRepo, deliveryRepo repo.DeliveryRepo, itemRepo repo.ItemRepo, paymentRepo repo.PaymentRepo) *PostgresOrderCoordinatorRepo {
-	return &PostgresOrderCoordinatorRepo{
+func NewPostgresCoordinatorRepo(dbPool *pgxpool.Pool, orderRepo repo.OrderRepo, deliveryRepo repo.DeliveryRepo, itemRepo repo.ItemRepo, paymentRepo repo.PaymentRepo) *PostgresCoordinatorRepo {
+	return &PostgresCoordinatorRepo{
 		dbPool:       dbPool,
 		orderRepo:    orderRepo,
 		deliveryRepo: deliveryRepo,
@@ -29,8 +29,8 @@ func NewPostgresOrderCoordinatorRepo(dbPool *pgxpool.Pool, orderRepo repo.OrderR
 	}
 }
 
-func (p *PostgresOrderCoordinatorRepo) Create(ctx context.Context, orderCoordinator *domain.OrderCoordinator, lg *zap.Logger) error {
-	lg.Info("Starting transaction for order", zap.String("order_uid", orderCoordinator.OrderUID))
+func (p *PostgresCoordinatorRepo) Create(ctx context.Context, coordinator *domain.Coordinator, lg *zap.Logger) error {
+	lg.Info("Starting transaction for order", zap.String("order_uid", coordinator.OrderUID))
 
 	tx, err := p.dbPool.Begin(ctx)
 	if err != nil {
@@ -48,25 +48,25 @@ func (p *PostgresOrderCoordinatorRepo) Create(ctx context.Context, orderCoordina
 		}
 	}()
 
-	err = p.orderRepo.Create(ctx, dbAdapter, &orderCoordinator.Order, lg)
+	err = p.orderRepo.Create(ctx, dbAdapter, &coordinator.Order, lg)
 	if err != nil {
 		lg.Warn("Failed to create order", zap.Error(err))
 		return err
 	}
 
-	err = p.deliveryRepo.Create(ctx, dbAdapter, &orderCoordinator.Delivery, lg)
+	err = p.deliveryRepo.Create(ctx, dbAdapter, &coordinator.Delivery, lg)
 	if err != nil {
 		lg.Warn("Failed to create delivery", zap.Error(err))
 		return err
 	}
 
-	err = p.paymentRepo.Create(ctx, dbAdapter, &orderCoordinator.Payment, lg)
+	err = p.paymentRepo.Create(ctx, dbAdapter, &coordinator.Payment, lg)
 	if err != nil {
 		lg.Warn("Failed to create payment", zap.Error(err))
 		return err
 	}
 
-	for _, item := range orderCoordinator.Items {
+	for _, item := range coordinator.Items {
 		err = p.itemRepo.Create(ctx, dbAdapter, &item, lg)
 		if err != nil {
 			lg.Warn("Error occurred while creating item", zap.Error(err))
@@ -79,7 +79,7 @@ func (p *PostgresOrderCoordinatorRepo) Create(ctx context.Context, orderCoordina
 		return err
 	}
 
-	lg.Info("Transaction committed successfully for order", zap.String("order_uid", orderCoordinator.OrderUID))
+	lg.Info("Transaction committed successfully for order", zap.String("order_uid", coordinator.OrderUID))
 
 	return nil
 }

@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"delivery-stream-service/infrastructure/db/adapter"
 	"delivery-stream-service/internal/domain"
 	"delivery-stream-service/internal/transaction"
 

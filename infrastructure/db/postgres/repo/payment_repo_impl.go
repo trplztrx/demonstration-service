@@ -2,22 +2,21 @@ package postgres
 
 import (
 	"context"
-	"delivery-stream-service/infrastructure/db/adapter"
 	"delivery-stream-service/internal/domain"
 	"delivery-stream-service/internal/transaction"
 
 	"go.uber.org/zap"
 )
 
-// type PostgresPaymentRepo struct {
-// 	dbAdapter adapter.DBAdapter
-// }
+type PostgresPaymentRepo struct {
+	executor transaction.SQLExecutor
+}
 
-// func NewPostgresPaymentRepo(dbAdapter adapter.DBAdapter) *PostgresPaymentRepo {
-// 	return &PostgresPaymentRepo{
-// 		dbAdapter: dbAdapter,
-// 	}
-// }
+func NewPostgresPaymentRepo(executor transaction.SQLExecutor) *PostgresPaymentRepo {
+	return &PostgresPaymentRepo{
+		executor: executor,
+	}
+}
 
 func (p *PostgresPaymentRepo) Create(ctx context.Context, executor transaction.SQLExecutor, payment *domain.Payment, orderUID string, lg *zap.Logger) error {
 	lg.Info("Create payment", zap.String("order_uid", orderUID))
